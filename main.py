@@ -34,35 +34,43 @@ def check_imports() -> int:
     return 0
 
 
+def load_setting():
+    setting = {"manual_login": False}
+    try:
+        with open("setting.json", encoding="utf-8") as f:
+            setting_load = json.load(f)
+            setting_load["manual_login"]
+            setting = setting_load
+    except FileNotFoundError:
+        with open("setting.json", "w", encoding="utf-8") as f:
+            json.dump(setting, f, indent=2)
+
+    return setting
+
+
+def load_user_data():
+    user_data = {}
+    try:
+        with open("user_data.json", mode="r", encoding="utf-8") as file:
+            user_data: dict = json.load(file)
+            # try to access, if it not exist,this will raise a exception
+            user_data["std_id"]
+            user_data["password"]
+            user_data["course"]
+    except KeyError or FileNotFoundError:
+        print("你似乎还没有在本地保存账户信息，请手动输入")
+        user_data = initialize.main()
+
+    return user_data
+
+
+setting = load_setting()
+user_data = load_user_data()
+
 URL_LOGIN = "http://id.scu.edu.cn/enduser/sp/sso/scdxplugin_jwt23?enterpriseId=scdx&target_url=index"
 URL_SELECT_COURSE = "http://zhjw.scu.edu.cn/student/courseSelect/courseSelect/index"
 URL_PLAN_COURSE = "http://zhjw.scu.edu.cn/student/courseSelect/planCourse/index"
 URL_FREE_COURSE = "http://zhjw.scu.edu.cn/student/courseSelect/freeCourse/index"
-
-
-# load setting
-setting = {"manual_login": False}
-try:
-    with open("setting.json", encoding="utf-8") as f:
-        setting_load = json.load(f)
-        setting_load["manual_login"]
-        setting = setting_load
-except FileNotFoundError:
-    with open("setting.json", "w", encoding="utf-8") as f:
-        json.dump(setting, f, indent=2)
-
-# load user data
-user_data = {}
-try:
-    with open("user_data.json", mode="r", encoding="utf-8") as file:
-        user_data: dict = json.load(file)
-        # try to access,if it not exist,this will raise a exception
-        user_data["std_id"]
-        user_data["password"]
-        user_data["course"]
-except FileNotFoundError:
-    print("你似乎还没有在本地保存账户信息，请手动输入")
-    user_data = initialize.main()
 
 
 def manual_login():
